@@ -4,14 +4,7 @@
 	dh $@
 
 override_dh_auto_install:
-	# Hauptskript installieren
 	install -D -m 0755 guideos-layout-sicherung $(CURDIR)/debian/guideos-layout-sicherung/usr/bin/guideos-layout-sicherung
-	
-	# Desktop-Datei installieren
 	install -D -m 0644 guideos-layout-sicherung.desktop $(CURDIR)/debian/guideos-layout-sicherung/usr/share/applications/guideos-layout-sicherung.desktop
-	
-	# Icon installieren
 	install -D -m 0644 guideos-layout-sicherung.svg $(CURDIR)/debian/guideos-layout-sicherung/usr/share/icons/hicolor/scalable/apps/guideos-layout-sicherung.svg
-	
-	# README installieren
 	install -D -m 0644 README.md $(CURDIR)/debian/guideos-layout-sicherung/usr/share/doc/guideos-layout-sicherung/README.md
