@@ -1,0 +1,16 @@
+# Debian Build Artifacts
+debian/guideos-layout-sicherung/
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/files
+debian/*.log
+debian/*.substvars
+*.deb
+*.ddeb
+*.buildinfo
+*.changes
+
+# Temporary files
+*~
+*.swp
+*.swo

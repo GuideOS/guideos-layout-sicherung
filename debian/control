@@ -1,0 +1,23 @@
+Source: guideos-layout-sicherung
+Section: utils
+Priority: optional
+Maintainer: Actionschnitzel <actionschnitzel@guideos.de>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.0
+Homepage: https://github.com/GuideOS/guideos-layout-sicherung
+
+Package: guideos-layout-sicherung
+Architecture: all
+Depends: ${misc:Depends}, zenity, dconf-cli, tar, bash (>= 4.0)
+Recommends: plank
+Description: Sichert und stellt das Cinnamon Desktop-Layout wieder her
+ Dieses Tool ermöglicht das komfortable Sichern und Wiederherstellen des
+ Cinnamon-Layouts unter GuideOS. Es speichert unter anderem Panel-Positionen,
+ Applets, Desklets, Themes, Fenster-Einstellungen sowie optional den Status
+ des Plank-Docks.
+ .
+ Funktionen:
+  - Layout sichern in ein komprimiertes Archiv
+  - Layout wiederherstellen aus einer Sicherung
+  - Plank-Status wird automatisch erkannt und wiederhergestellt
+  - Benutzerfreundliche grafische Oberfläche mit zenity
