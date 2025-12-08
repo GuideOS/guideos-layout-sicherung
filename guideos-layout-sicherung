@@ -175,8 +175,7 @@ restore_cinnamon() {
 
     info "Wiederherstellung abgeschlossen."
 
-    zenity --info --no-wrap --text "Wiederherstellung abgeschlossen.\n\nBitte melde dich einmal ab und wieder an,\ndamit alle Einstellungen korrekt \u00fcbernommen werden."
-}
+    zenity --warning --no-wrap --text "                    Wiederherstellung abgeschlossen.\n\n               !! BITTE STARTE DEN RECHNER JETZT NEU,\nDAMIT ALLE EINSTELLUNGEN KORREKT \ÜBERNOMMEN WERDEN !!"}
 
 # ---------------------------------------------------------
 # Hauptmen\u00fc
