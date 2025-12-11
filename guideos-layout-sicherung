@@ -1,23 +1,21 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# GuideOS Desktop-Sicherung
+# GuideOS Layout-Sicherung
 # ------------------------------------------------------------------------------
 # Beschreibung:
-# Dieses Tool ermöglicht es Einsteigern, ihren gesamten Cinnamon-Desktop
+# Dieses Tool ermöglicht es Usern das Cinnamon-Layout
 # zu sichern und wiederherzustellen, inklusive:
 #   - Panel-Layout und angepinnter Starter
 #   - Lieblings-Apps
 #   - Desktop-Wallpaper
 #   - Cinnamon- und Nemo-Einstellungen
 #   - Applets, Desklets und Extensions
-#   - Relevante Konfigurations- und Benutzerverzeichnisse
-# Die Sicherung erfolgt in einem komprimierten .tar.gz-Archiv.
+#   - Plank-Dock
 #
-# Autor: evilware666 & Helga
-# Version: 1.3
-# Datum: 2025-12-08
+# Autor   : evilware666 & Helga
+# Version : 1.3.3
+# Datum   : 2025-12-10
 # ==============================================================================
-
 
 set -euo pipefail
 IFS=$'\n\t'
@@ -35,7 +33,9 @@ error() {
     exit 1
 }
 
-# Temp-Verzeichnis
+# ------------------------------------------------------------------
+# Tempor\u00e4res Arbeitsverzeichnis
+# ------------------------------------------------------------------
 TMPDIR=$(mktemp -d)
 
 cleanup() {
@@ -45,26 +45,25 @@ trap cleanup EXIT
 
 USER_HOME="$HOME"
 
-# ---------------------------------------------------------
+# ------------------------------------------------------------------
 # Backup erstellen
-# ---------------------------------------------------------
+# ------------------------------------------------------------------
 backup_cinnamon() {
+    BACKUP_FILE=$(zenity --file-selection \
+        --save \
+        --confirm-overwrite \
+        --title="Speicherort f\u00fcr Sicherung ausw\u00e4hlen" \
+        --filename="$HOME/Layout-Sicherung-$(date +%Y-%m-%d_%H-%M).tar.gz")
 
-BACKUP_FILE=$(zenity --file-selection \
-    --save \
-    --confirm-overwrite \
-    --title="Speicherort f\u00fcr Sicherung ausw\u00e4hlen" \
-    --filename="$HOME/cinnamon-backup-$(date +%Y-%m-%d_%H-%M).tar.gz")
+    [[ -z "$BACKUP_FILE" ]] && return
 
-[[ -z "$BACKUP_FILE" ]] && return
-
-    info "Sicherung wird vorbereitet \u2026"
     mkdir -p "$TMPDIR/data"
+    info "Sicherung wird vorbereitet \u2026"
 
     # dconf sichern
     dconf dump / > "$TMPDIR/data/dconf-full.dconf" || error "dconf konnte nicht gesichert werden."
 
-    # Cinnamon + Nemo + Themes + Hintergrundbilder
+    # Cinnamon / Nemo / Themes / Fonts
     DIRS=(
         ".config/cinnamon"
         ".config/nemo"
@@ -85,14 +84,8 @@ BACKUP_FILE=$(zenity --file-selection \
     done
 
     # Plank sichern
-    PLANK_DIRS=(
-        ".config/plank"
-        ".local/share/plank"
-    )
-
-    for p in "${PLANK_DIRS[@]}"; do
+    for p in ".config/plank" ".local/share/plank"; do
         if [[ -d "$USER_HOME/$p" ]]; then
-            info "Sichere Plank: $p \u2026"
             mkdir -p "$TMPDIR/data/$p"
             cp -a "$USER_HOME/$p" "$TMPDIR/data/$p/../" || true
         fi
@@ -106,17 +99,16 @@ BACKUP_FILE=$(zenity --file-selection \
         echo "no" > "$TMPDIR/data/.plank-status/active"
     fi
 
-    # Archiv packen
+    # Archiv erstellen
     tar -czf "$BACKUP_FILE" -C "$TMPDIR" data || error "Sicherung konnte nicht erstellt werden."
 
     zenity --info --no-wrap --text "Sicherung erfolgreich erstellt."
 }
 
-# ---------------------------------------------------------
+# ------------------------------------------------------------------
 # Backup wiederherstellen
-# ---------------------------------------------------------
+# ------------------------------------------------------------------
 restore_cinnamon() {
-
     BACKUP_TO_RESTORE=$(zenity --file-selection --title="Sicherung ausw\u00e4hlen")
     [[ -z "$BACKUP_TO_RESTORE" ]] && return
 
@@ -128,15 +120,14 @@ restore_cinnamon() {
         dconf load / < "$TMPDIR/data/dconf-full.dconf" || error "dconf Wiederherstellung fehlgeschlagen."
     fi
 
-    # Benutzerkonfigurationen zur\u00fcckkopieren
+    # Benutzerdateien zur\u00fcckkopieren
     cp -a "$TMPDIR/data/." "$USER_HOME/" || error "Kopieren der Daten fehlgeschlagen."
     chown -R "$USER:$USER" "$USER_HOME"
 
-    # Plank-Ordner zur\u00fcckkopieren
+    # Plank-Verzeichnisse sauber ersetzen
     for p in ".config/plank" ".local/share/plank"; do
         SRC="$TMPDIR/data/$p"
         DEST="$USER_HOME/$p"
-
         if [[ -d "$SRC" ]]; then
             rm -rf "$DEST"
             mkdir -p "$(dirname "$DEST")"
@@ -145,42 +136,58 @@ restore_cinnamon() {
         fi
     done
 
-    # ---------------------------------------------------------
-    # Plank-Status wiederherstellen
-    # ---------------------------------------------------------
+    # ------------------------------------------------------------------
+    # Plank-Status robust wiederherstellen
+    # ------------------------------------------------------------------
     PLANK_STATUS_FILE="$TMPDIR/data/.plank-status/active"
+    AUTOSTART_DIR="$USER_HOME/.config/autostart"
+    AUTOSTART_FILE="$AUTOSTART_DIR/plank.desktop"
+
+    mkdir -p "$AUTOSTART_DIR"
 
     if [[ -f "$PLANK_STATUS_FILE" ]]; then
         STATUS=$(cat "$PLANK_STATUS_FILE")
 
-        AUTOSTART_FILE="$USER_HOME/.config/autostart/plank.desktop"
-
-        # Wenn Plank vorher NICHT aktiv war
         if [[ "$STATUS" == "no" ]]; then
+            # Plank deaktivieren
             pkill plank 2>/dev/null || true
-
-            if [[ -f "$AUTOSTART_FILE" ]]; then
+            [[ -f "$AUTOSTART_FILE" ]] && \
                 sed -i 's/^X-GNOME-Autostart-enabled=.*/X-GNOME-Autostart-enabled=false/' "$AUTOSTART_FILE"
-            fi
-        fi
+        else
+            # Plank aktiv \u2192 robust starten
+            cat > "$AUTOSTART_FILE" <<EOF
+[Desktop Entry]
+Type=Application
+Name=Plank
+Exec=plank
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
+EOF
+            chown "$USER:$USER" "$AUTOSTART_FILE"
 
-        # Wenn Plank aktiv war
-        if [[ "$STATUS" == "yes" ]]; then
-            if command -v plank >/dev/null 2>&1; then
-                pkill plank 2>/dev/null || true
-                nohup plank >/dev/null 2>&1 &
-            fi
+            # Direkt nach Wiederherstellung starten (Cinnamon-ready)
+            (
+                # Warte bis Cinnamon wirklich l\u00e4uft
+                while ! pgrep -x cinnamon >/dev/null; do sleep 1; done
+                sleep 2
+                # Starte Plank nur, wenn noch nicht aktiv
+                if ! pgrep -x plank >/dev/null 2>&1; then
+                    plank &
+                fi
+            ) &
         fi
     fi
 
-    info "Wiederherstellung abgeschlossen."
+    zenity --info --no-wrap --text \
+"Wiederherstellung abgeschlossen.
 
-    zenity --info --no-wrap --text "Wiederherstellung abgeschlossen.\n\nBitte melde dich einmal ab und wieder an,\ndamit alle Einstellungen korrekt \u00fcbernommen werden."
+Bitte einmal ab- und wieder anmelden,
+damit alle Einstellungen korrekt greifen."
 }
 
-# ---------------------------------------------------------
+# ------------------------------------------------------------------
 # Hauptmen\u00fc
-# ---------------------------------------------------------
+# ------------------------------------------------------------------
 while true; do
     aktion=$(zenity --list \
         --title="GuideOS Desktop-Sicherung" \
@@ -191,9 +198,8 @@ while true; do
 
     [[ -z "$aktion" || "$aktion" == "Beenden" ]] && exit 0
 
-    if [[ "$aktion" == "Sicherung erstellen" ]]; then
-        backup_cinnamon
-    elif [[ "$aktion" == "Sicherung wiederherstellen" ]]; then
-        restore_cinnamon
-    fi
+    case "$aktion" in
+        "Sicherung erstellen") backup_cinnamon ;;
+        "Sicherung wiederherstellen") restore_cinnamon ;;
+    esac
 done
