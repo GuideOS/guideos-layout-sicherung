@@ -5,6 +5,9 @@
 ## Entwickler:
 evilware666 & Helga
 
+## Version
+1.2
+
 ## 📝 Überblick  
 Der *GuideOS Cinnamon Backup & Restore* ist ein leicht verständliches Werkzeug, um **alle wichtigen Cinnamon‑Desktop‑Einstellungen** zu sichern und wiederherzustellen.  
 Ideal vor Systemänderungen, nach Neuinstallationen oder zum Übertragen des eigenen Setups auf einen anderen Rechner.
