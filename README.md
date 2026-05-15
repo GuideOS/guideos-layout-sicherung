@@ -1,84 +1,78 @@
 
-# GuideOS Media Konverter  
-Ein moderner, einsteigerfreundlicher Medien‑Konverter für Linux – entwickelt mit **GTK4** und **libadwaita**.
+# GuideOS Cinnamon-Sicherung
+**Einfaches Backup‑ und Restore‑Tool für den Cinnamon‑Desktop (GTK4)**
 
-## Entwickler: 
+## Entwickler:
 evilware666 & Helga
 
-## Version 
-1.1
+## 📝 Überblick  
+Der *GuideOS Cinnamon Backup & Restore* ist ein leicht verständliches Werkzeug, um **alle wichtigen Cinnamon‑Desktop‑Einstellungen** zu sichern und wiederherzustellen.  
+Ideal vor Systemänderungen, nach Neuinstallationen oder zum Übertragen des eigenen Setups auf einen anderen Rechner.
 
-## ✨ Funktionen
-- **Video‑, Audio‑ und Bild‑Konvertierung**  
-  Unterstützt MP4, AVI, MKV, MOV, WEBM, JPG, PNG, WEBP, BMP, MP3, FLAC, WAV, OGG u.v.m.
-- **Batch‑Konvertierung**  
-  Mehrere Dateien gleichzeitig konvertieren – inkl. Fortschrittsanzeige pro Datei.
-- **Drag & Drop Unterstützung**  
-  Dateien einfach in das Fenster ziehen.
-- **Automatische Thumbnails**  
-  • Video: Frame‑Vorschau  
-  • Bild: verkleinertes Vorschaubild  
-  • Audio: Wellenform‑Bild  
-- **Fortschrittsanzeige mit Prozenten**  
-  ffmpeg‑Parsing (`out_time_ms` / `time=`) für echte Fortschrittswerte.
-- **Qualitäts‑ und Auflösungswahl**  
-  • Video: 4K, 2K, 1080p, 720p, 480p  
-  • Bild: Qualitätsstufen (100–50%)  
-  • Audio: Bitraten (320k–128k)
-- **Speicherung der letzten Einstellungen**  
-  Merkt sich Format & Qualität pro Medien‑Typ (`~/.config/guideos-mediaconverter.ini`).
-- **System‑Benachrichtigungen**  
-  Erfolg/Fehler über libnotify.
-- **Abbrechen‑Funktion**  
-  Konvertierung jederzeit stoppen.
-- **Saubere GTK4‑UI**  
-  libadwaita‑Design, responsive Layouts, moderne Dialoge.
+## ✨ Funktionen  
+- 🔧 **Backup des gesamten Cinnamon‑Desktops**
+  - Cinnamon‑Einstellungen (`dconf`)
+  - Themes, Icons, Applets, Desklets
+  - Hintergrundbild + Pfad
+  - Autostart‑Einträge
+  - Benutzer‑Anwendungen (`.local/share/applications`)
+- 🔄 **Wiederherstellung mit einem Klick**
+  - Vollständiges Zurückspielen aller gesicherten Daten
+  - Automatisches Wiederherstellen des Hintergrundbilds
+  - Nutzung von `rsync` für zuverlässige Dateiübertragung
+- 🧵 **Multithreading**
+  - Backup/Restore läuft im Hintergrund
+  - Fortschrittsdialog mit Spinner
+  - Abbrechen jederzeit möglich
+- 🛡️ **Sicher**
+  - Arbeitet ausschließlich im Benutzerverzeichnis
+  - Keine Systemdateien werden verändert
+- 🖥️ **GTK4‑Oberfläche**
+  - Modern, klar, einsteigerfreundlich
 
----
+## ❗ Nicht enthalten  
+- Angepinnte Programme in der Cinnamon‑Taskleiste (Panel‑Launcher)
 
-## 📦 Abhängigkeiten
-- `ffmpeg`
-- `ffprobe`
-- `imagemagick` (für Bild‑Konvertierung & Thumbnails)
-- `python3-gi`
-- GTK4 + libadwaita
-- `python3-notify2` / GI Notify
+## 📦 Gesicherte Inhalte  
+Das Backup‑Archiv (`.tar.gz`) enthält:
 
----
-
-## ▶️ Starten
-```bash
-python3 mediakonverter.py
+```
+.cinnamon/
+.config/cinnamon/
+.local/share/cinnamon/
+.local/cinnamon/
+.local/share/icons/
+.icons/
+.themes/
+.config/autostart/
+.local/share/applications/
+cinnamon-configs.dconf
+wallpaper/
 ```
 
----
+## ▶️ Verwendung
 
-## 🖼️ Bedienung
-1. **Medientyp wählen** (Video / Bild / Audio)  
-2. Dateien per **Drag & Drop** oder **Dateiauswahl** hinzufügen  
-3. **Zielformat** und **Qualität** wählen  
-4. **Konvertieren** klicken  
-5. Fortschritt & Status werden live angezeigt  
-6. Nach Abschluss erscheint eine System‑Benachrichtigung
+### Backup erstellen
+1. Programm starten  
+2. **„Sichern“** klicken  
+3. Speicherort wählen  
+4. Backup wird erstellt → `.tar.gz`
 
----
+### Wiederherstellen
+1. Programm starten  
+2. **„Wiederherstellen“** klicken  
+3. Backup‑Datei auswählen  
+4. Nach Abschluss: **einmal ab‑ und wieder anmelden**
 
-## 🆕 Neuerungen in dieser Version
-- ✔ **Batch‑Konvertierung** mit Dateizähler  
-- ✔ **Drag & Drop** für mehrere Dateien  
-- ✔ **Thumbnails für alle Medientypen**  
-- ✔ **Echte ffmpeg‑Fortschrittsanzeige** (Parsing von `out_time_ms` & `time=`)  
-- ✔ **Speicherung der letzten Einstellungen** (Format & Qualität)  
-- ✔ **Verbesserte Fehlerdialoge**  
-- ✔ **Audio‑Wellenform‑Thumbnail**  
-- ✔ **Zentrierte Thumbnail‑Box & Info‑Labels**  
-- ✔ **ESC = Zurück**, **Enter = Konvertieren**  
-- ✔ **Verbesserte Status‑ und Prozentanzeige**  
-- ✔ **Stabilere ffmpeg‑Aufrufe & Timeout‑Handling**
+## 🔧 Technische Details  
+- Export der Cinnamon‑Einstellungen via  
+  `dconf dump /org/cinnamon/`
+- Wiederherstellung via  
+  `dconf load /org/cinnamon/`
+- Hintergrundbild wird kopiert und per `gsettings` gesetzt
+- Dateien werden mit `rsync -a` übertragen
+- Temporäre Arbeitsverzeichnisse werden automatisch gelöscht
 
----
-
-## 📄 Lizenz
-MIT‑Lizenz  
-
+## 📄 Lizenz  
+MIT‑Lizenz
 

@@ -1,10 +1,10 @@
 [Desktop Entry]
-Name=GuideOS Layout-Sicherung
-Comment=Sichert und stellt dein Desktop-Layout wieder her
-Exec=/usr/bin/guideos-layout-sicherung
-Icon=guideos-layout-sicherung
+Name=GuideOS Cinnamon-Sicherung
+Comment=Sichert und stellt Cinnamon Desktop-Einstellungen wieder her
+Exec=/bin/guideos-layout-sicherung.py
+Icon=/usr/share/pixmaps/guideos-layout-sicherung.png
 Terminal=false
 Type=Application
 Categories=System;Settings;
 StartupNotify=true
-Name[de_DE]=GuideOS Layout-Sicherung
+Name[de_DE]=guideos-cinnamon-sicherung.desktop
