@@ -1,66 +1,84 @@
-# GuideOS Cinnamon-Sicherung
 
-Autor: evilware666 & Helga\
-Version: 1.1
+# GuideOS Media Konverter  
+Ein moderner, einsteigerfreundlicher Medien‑Konverter für Linux – entwickelt mit **GTK4** und **libadwaita**.
 
-Dieses Tool ermöglicht das komfortable Sichern und Wiederherstellen des
-Cinnamon-Layouts unter GuideOS.\
-Es speichert unter anderem Panel-Positionen, Applets, Desklets, Themes,
-Fenster-Einstellungen sowie optional den Status des Plank-Docks.
+## Entwickler: 
+evilware666 & Helga
 
-## Funktionen
+## Version 
+1.1
 
-### 1. Layout sichern
+## ✨ Funktionen
+- **Video‑, Audio‑ und Bild‑Konvertierung**  
+  Unterstützt MP4, AVI, MKV, MOV, WEBM, JPG, PNG, WEBP, BMP, MP3, FLAC, WAV, OGG u.v.m.
+- **Batch‑Konvertierung**  
+  Mehrere Dateien gleichzeitig konvertieren – inkl. Fortschrittsanzeige pro Datei.
+- **Drag & Drop Unterstützung**  
+  Dateien einfach in das Fenster ziehen.
+- **Automatische Thumbnails**  
+  • Video: Frame‑Vorschau  
+  • Bild: verkleinertes Vorschaubild  
+  • Audio: Wellenform‑Bild  
+- **Fortschrittsanzeige mit Prozenten**  
+  ffmpeg‑Parsing (`out_time_ms` / `time=`) für echte Fortschrittswerte.
+- **Qualitäts‑ und Auflösungswahl**  
+  • Video: 4K, 2K, 1080p, 720p, 480p  
+  • Bild: Qualitätsstufen (100–50%)  
+  • Audio: Bitraten (320k–128k)
+- **Speicherung der letzten Einstellungen**  
+  Merkt sich Format & Qualität pro Medien‑Typ (`~/.config/guideos-mediaconverter.ini`).
+- **System‑Benachrichtigungen**  
+  Erfolg/Fehler über libnotify.
+- **Abbrechen‑Funktion**  
+  Konvertierung jederzeit stoppen.
+- **Saubere GTK4‑UI**  
+  libadwaita‑Design, responsive Layouts, moderne Dialoge.
 
-Beim Sichern werden alle relevanten Cinnamon-Konfigurationsdateien in
-ein Sicherungsverzeichnis kopiert.\
-Der Benutzer kann beim Start die Sicherungs-Location selbst auswählen.
+---
 
-**Plank-Logik beim Sichern:**\
-- Wenn Plank zum Zeitpunkt der Sicherung aktiv ist, wird dies erkannt
-und gespeichert.\
-- Wenn Plank nicht aktiv ist, wird dies ebenfalls korrekt gespeichert.
+## 📦 Abhängigkeiten
+- `ffmpeg`
+- `ffprobe`
+- `imagemagick` (für Bild‑Konvertierung & Thumbnails)
+- `python3-gi`
+- GTK4 + libadwaita
+- `python3-notify2` / GI Notify
 
-Es erfolgt keine wiederkehrende OK-Abfrage -- nur eine einzige
-Bestätigung nach Abschluss.
+---
 
-### 2. Layout wiederherstellen
+## ▶️ Starten
+```bash
+python3 mediakonverter.py
+```
 
-Beim Wiederherstellen werden die gesicherten Dateien in das System
-zurückkopiert.
+---
 
-**Plank-Verhalten beim Wiederherstellen:**\
-- Wenn Plank beim Sichern aktiv war → Plank wird automatisch wieder
-aktiviert.\
-- Wenn Plank beim Sichern nicht aktiv war → Plank wird deaktiviert bzw.
-nicht gestartet.
+## 🖼️ Bedienung
+1. **Medientyp wählen** (Video / Bild / Audio)  
+2. Dateien per **Drag & Drop** oder **Dateiauswahl** hinzufügen  
+3. **Zielformat** und **Qualität** wählen  
+4. **Konvertieren** klicken  
+5. Fortschritt & Status werden live angezeigt  
+6. Nach Abschluss erscheint eine System‑Benachrichtigung
 
-Nach dem Wiederherstellen erscheint ein Hinweis, dass der Benutzer sich
-ab- und wieder anmelden muss.
+---
 
-Es erfolgt nur eine OK-Meldung nach Abschluss -- ohne unnötige
-Zwischenbestätigungen.
+## 🆕 Neuerungen in dieser Version
+- ✔ **Batch‑Konvertierung** mit Dateizähler  
+- ✔ **Drag & Drop** für mehrere Dateien  
+- ✔ **Thumbnails für alle Medientypen**  
+- ✔ **Echte ffmpeg‑Fortschrittsanzeige** (Parsing von `out_time_ms` & `time=`)  
+- ✔ **Speicherung der letzten Einstellungen** (Format & Qualität)  
+- ✔ **Verbesserte Fehlerdialoge**  
+- ✔ **Audio‑Wellenform‑Thumbnail**  
+- ✔ **Zentrierte Thumbnail‑Box & Info‑Labels**  
+- ✔ **ESC = Zurück**, **Enter = Konvertieren**  
+- ✔ **Verbesserte Status‑ und Prozentanzeige**  
+- ✔ **Stabilere ffmpeg‑Aufrufe & Timeout‑Handling**
 
-### 3. Hauptmenü
+---
 
-Das Skript zeigt ein einfaches Menü mit folgenden Auswahlmöglichkeiten:
+## 📄 Lizenz
+MIT‑Lizenz  
 
--   Layout sichern\
--   Layout wiederherstellen\
--   Beenden
 
-Die Option *Beenden* schließt das Programm vollständig.
-
-## Speicherort der Sicherungen
-
-Der Benutzer kann beim Start frei wählen, wohin die Sicherung
-gespeichert wird.\
-Dies ermöglicht z. B. Sicherungen auf USB-Datenträgern oder in eigene
-Ordnerstrukturen.
-
-## Technische Hinweise
-
--   Alle Funktionen sind robust ausgelegt.\
--   Die Plank-Erkennung stellt sicher, dass kein falscher Autostart
-    erfolgt.\
--   Es werden ausschließlich Nutzerkonfigurationsdateien verändert.
